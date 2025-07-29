@@ -1,0 +1,32 @@
+<div>
+<Sheet>
+  <SheetTrigger className="w-full">
+      <div className="flex border-b border-gray-300 px-6 py-6 space-x-[500px]">
+      <div className="text-xl font-bold">Maria Cattaui</div>
+      <div className="flex items-center ml-4 justify-center">
+        <Avatar className="w-14 h-14 overflow-hidden">
+          {/* <Image
+            src="https://opensocietyfoundations.imgix.net/uploads/0620467c-74a7-423d-8738-8ffe77e2b0ad/cattaui-maria-009-2200.jpg?auto=compress%2Cformat&fit=min&fm=jpg&q=80&rect=442%2C0%2C1415%2C1414"
+            alt="Profile Picture"
+            width={48}
+            height={48}
+          /> */}
+          <AvatarImage src="https://opensocietyfoundations.imgix.net/uploads/0620467c-74a7-423d-8738-8ffe77e2b0ad/cattaui-maria-009-2200.jpg?auto=compress%2Cformat&fit=min&fm=jpg&q=80&rect=442%2C0%2C1415%2C1414"
+          />
+        </Avatar>
+        <div className="text-base ml-[6rem]">Board Member</div>
+      </div>
+    </div>
+
+  </SheetTrigger>
+  <SheetContent>
+    <SheetHeader>
+      <SheetTitle>Are you absolutely sure?</SheetTitle>
+      <SheetDescription>
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers.
+      </SheetDescription>
+    </SheetHeader>
+  </SheetContent>
+</Sheet>
+</div>
