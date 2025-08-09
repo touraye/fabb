@@ -10,18 +10,19 @@ interface ResourceCardProps {
 }
 
 const ResourceCard = ({ resource }: ResourceCardProps) => {
-  const getLinkHref = () => {
-    switch (resource.type) {
-      case 'project':
-        return `/projects/${resource.id}`;
-      case 'news':
-        // Assuming /news/[id] will be created
-        return `/news/${resource.id}`;
-      case 'gallery':
-        // Assuming /galleries/[id] will be created
-        return `/galleries/${resource.id}`;
-    }
-  };
+  const getLinkHref = `/categories/${resource.id}`;
+  // const getLinkHref = () => {
+  //   switch (resource.type) {
+  //     case 'project':
+  //       return `/projects/${resource.id}`;
+  //     case 'news':
+  //       // Assuming /news/[id] will be created
+  //       return `/news/${resource.id}`;
+  //     case 'gallery':
+  //       // Assuming /galleries/[id] will be created
+  //       return `/galleries/${resource.id}`;
+  //   }
+  // };
 
   const getImageUrl = () => {
     // Both Project and News have an 'images' array.
@@ -36,7 +37,7 @@ const ResourceCard = ({ resource }: ResourceCardProps) => {
   const description = 'description' in resource ? resource.description : '';
 
   return (
-    <Link href={getLinkHref()} className="block border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+    <Link href={getLinkHref} className="block border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
       <div className="relative w-full h-48 bg-gray-200">
         {/* The Image component from Next.js requires a valid src.
             I need to handle the case where the image URL might be missing or invalid.
