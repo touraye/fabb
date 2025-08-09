@@ -46,3 +46,23 @@ export const getMostRecentNews = (categories: Category[]): News | null => {
 
   return mostRecentNews;
 };
+
+export const getCategoryById = async (id: string): Promise<Category | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/categories/${id}`, { next: { revalidate: 3600 } });
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error('Failed to fetch category');
+    }
+    // The API for a single category returns { "data": {...} }
+    const result: { data: Category } = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error(`Error fetching category ${id}:`, error);
+    // Re-throwing the error is important so the caller knows the operation failed.
+    // The page can then decide to show a not-found or an error page.
+    throw error;
+  }
+};
