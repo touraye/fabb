@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import CategoriesList from "@/components/CategoriesList";
 import LogoSlider from "@/components/Hero/LogoSlider";
 import Circle from "@/components/Hero/Cirlcle";
 import VideoHero from "@/components/Hero/VideoHero";
@@ -16,6 +17,7 @@ const Home = () => {
   
   return (
     <div>
+      <CategoriesList />
       <VideoHero />
       <section className="max-container 2xl:w-[80%] w-[90%] mx-auto">
         <div className="bg-app-primary relative md:px-10 py-6 p-5 mb-16 md:-mt-[150px] -mt-[100px] max-md:mx-auto md:space-y-5 space-y-3 z-60 max-w-[40rem]">
