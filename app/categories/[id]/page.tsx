@@ -4,14 +4,18 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
+// In Next.js 15, `params` can be a promise.
+// We update the interface to reflect this for type safety.
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const CategoryPage = async ({ params }: CategoryPageProps) => {
-  const category = await getCategoryById(params.id);
+  // Await the params promise to get the actual params object
+  const resolvedParams = await params;
+  const category = await getCategoryById(resolvedParams.id);
 
   if (!category) {
     notFound();
