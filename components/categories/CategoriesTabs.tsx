@@ -1,101 +1,63 @@
-import { getCategories } from '@/lib/data';
-import { Category, News, Project, Gallery } from '@/type';
+import { getCategories, getAllProjects, getAllNews, getAllGalleries } from '@/lib/data';
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from 'next/image';
+import ResourceCard from '../reusable/ResourceCard';
+import { Gallery, News, Project } from '@/type';
+
+type Resource = (Project & { type: 'project' }) | (News & { type: 'news' }) | (Gallery & { type: 'gallery' });
 
 const CategoriesTabs = async () => {
   const categories = await getCategories();
 
   if (!categories || categories.length === 0) {
-    return <p>No categories found.</p>;
+    return <p>No content found.</p>;
   }
 
-  const renderProjects = (projects: Project[]) => {
-    if (projects.length === 0) return <p>No projects in this category.</p>;
-    return (
-      <div className="space-y-2">
-        {projects.map(project => (
-          <div key={project.id} className="p-2 border rounded">
-            <h4 className="font-semibold">{project.title}</h4>
-            <p className="text-sm text-gray-600">{project.description}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const allProjects = getAllProjects(categories);
+  const allNews = getAllNews(categories);
+  const allGalleries = getAllGalleries(categories);
 
-  const renderNews = (news: News[]) => {
-    if (news.length === 0) return <p>No news in this category.</p>;
-    return (
-      <div className="space-y-2">
-        {news.map(newsItem => (
-          <div key={newsItem.id} className="p-2 border rounded">
-            <h4 className="font-semibold">{newsItem.title}</h4>
-            <p className="text-sm text-gray-600">{newsItem.description}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const allResources = [...allProjects, ...allNews, ...allGalleries].sort((a, b) => {
+    // Sort by creation date, most recent first
+    const dateA = new Date('created_at' in a ? a.created_at : 0);
+    const dateB = new Date('created_at' in b ? b.created_at : 0);
+    return dateB.getTime() - dateA.getTime();
+  });
 
-  const renderGalleries = (galleries: Gallery[]) => {
-    // The gallery data structure is not well defined in the sample,
-    // so this is a placeholder implementation.
-    if (galleries.length === 0) return <p>No galleries in this category.</p>;
+  const renderResourceGrid = (resources: Resource[]) => {
+    if (resources.length === 0) {
+      return <p className="text-center py-8 text-gray-500">No items to display in this category.</p>;
+    }
     return (
-      <div className="grid grid-cols-3 gap-2">
-        {galleries.map(gallery => (
-          <div key={gallery.id} className="p-2 border rounded">
-            <h4 className="font-semibold">{gallery.title}</h4>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
+        {resources.map(resource => (
+          <ResourceCard key={`${resource.type}-${resource.id}`} resource={resource} />
         ))}
       </div>
     );
   };
 
   return (
-    <Tabs defaultValue={categories[0].id.toString()} className="w-full">
-      <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
-        {categories.map((category) => (
-          <TabsTrigger key={category.id} value={category.id.toString()}>{category.title}</TabsTrigger>
-        ))}
+    <Tabs defaultValue="all" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsTrigger value="all">All</TabsTrigger>
+        <TabsTrigger value="projects">Projects</TabsTrigger>
+        <TabsTrigger value="news">News</TabsTrigger>
+        <TabsTrigger value="galleries">Galleries</TabsTrigger>
       </TabsList>
-      {categories.map((category) => (
-        <TabsContent key={category.id} value={category.id.toString()}>
-          <div className="p-4 border rounded-lg mt-2">
-            <div className="flex items-start space-x-4">
-              {category.image && (
-                <Image
-                  src={category.image}
-                  alt={category.title}
-                  width={150}
-                  height={150}
-                  className="rounded-lg object-cover"
-                />
-              )}
-              <div>
-                <h3 className="text-xl font-bold mb-2">{category.title}</h3>
-                <p>{category.description}</p>
-              </div>
-            </div>
-            <div className="mt-4 space-y-4">
-              <div>
-                <h4 className="text-lg font-semibold border-b pb-1 mb-2">Projects</h4>
-                {renderProjects(category.projects)}
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold border-b pb-1 mb-2">News</h4>
-                {renderNews(category.news)}
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold border-b pb-1 mb-2">Galleries</h4>
-                {renderGalleries(category.galleries)}
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-      ))}
+
+      <TabsContent value="all">
+        {renderResourceGrid(allResources)}
+      </TabsContent>
+      <TabsContent value="projects">
+        {renderResourceGrid(allProjects)}
+      </TabsContent>
+      <TabsContent value="news">
+        {renderResourceGrid(allNews)}
+      </TabsContent>
+      <TabsContent value="galleries">
+        {renderResourceGrid(allGalleries)}
+      </TabsContent>
     </Tabs>
   );
 };

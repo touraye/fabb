@@ -1,4 +1,4 @@
-import { ApiResponse, Category, News, Project } from "@/type";
+import { ApiResponse, Category, News, Project, Gallery } from "@/type";
 
 const API_BASE_URL = "https://portal.fabbfoundation.com/api/v1";
 
@@ -63,6 +63,43 @@ export const getCategoryById = async (id: string): Promise<Category | null> => {
     console.error(`Error fetching category ${id}:`, error);
     // Re-throwing the error is important so the caller knows the operation failed.
     // The page can then decide to show a not-found or an error page.
+    throw error;
+  }
+};
+
+export const getAllProjects = (categories: Category[]): (Project & { type: 'project' })[] => {
+  return categories.flatMap(category =>
+    category.projects.map(p => ({ ...p, type: 'project' }))
+  );
+};
+
+export const getAllNews = (categories: Category[]): (News & { type: 'news' })[] => {
+  return categories.flatMap(category =>
+    category.news.map(n => ({ ...n, type: 'news' }))
+  );
+};
+
+export const getAllGalleries = (categories: Category[]): (Gallery & { type: 'gallery' })[] => {
+  return categories.flatMap(category =>
+    category.galleries.map(g => ({ ...g, type: 'gallery' }))
+  );
+};
+
+export const getProjectById = async (id: string): Promise<Project | null> => {
+  try {
+    // Assuming a /projects/{id} endpoint exists
+    const response = await fetch(`${API_BASE_URL}/projects/${id}`, { next: { revalidate: 3600 } });
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error('Failed to fetch project');
+    }
+    // Assuming the API for a single project returns { "data": {...} }
+    const result: { data: Project } = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error(`Error fetching project ${id}:`, error);
     throw error;
   }
 };
