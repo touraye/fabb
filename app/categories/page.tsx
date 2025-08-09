@@ -1,13 +1,18 @@
-import CategoriesList from "@/components/CategoriesList";
+import React, { Suspense } from 'react';
+import CategorySkeleton from '@/components/skeletons/CategorySkeleton';
+import HeroSection from '@/components/categories/HeroSection';
+import CategoriesTabs from '@/components/categories/CategoriesTabs';
 
-export default function CategoryPage() {
-    return (<>
-        {/* Hero section display the most recent post */}
+const CategoriesPage = () => {
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-8 text-center">Our Work and Impact</h1>
+      <Suspense fallback={<CategorySkeleton />}>
+        <HeroSection />
+        <CategoriesTabs />
+      </Suspense>
+    </div>
+  );
+};
 
-        {/* Tabs for selecting different categories */}
-        {/* from the categories there are: gallery, new, and projects */}
-        {/* Tabs: All, News, Project, Gallery */}
-        {/* Each should pull their respective data*/}
-        <CategoriesList />
-    </>)
-}
+export default CategoriesPage;
