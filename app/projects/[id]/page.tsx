@@ -3,14 +3,17 @@ import { notFound } from 'next/navigation';
 import React from 'react';
 import Image from 'next/image';
 
+// Update the interface for Next.js 15
 interface ProjectPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const ProjectPage = async ({ params }: ProjectPageProps) => {
-  const project = await getProjectById(params.id);
+  // Await the params promise to resolve it
+  const resolvedParams = await params;
+  const project = await getProjectById(resolvedParams.id);
 
   if (!project) {
     notFound();
